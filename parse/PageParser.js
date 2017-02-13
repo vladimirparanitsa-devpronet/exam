@@ -21,9 +21,13 @@ class PageParser {
   }
 
   grabPageElements(pageHtml, element) {
-    this.$ = cheerio.load(pageHtml);
-    console.log();
-    return this.$(element);
+    const $ = cheerio.load(pageHtml);
+    const result = [];
+    $(element).map((index, tag) => {
+      result.push($(tag).text());
+    });
+
+    return result;
   }
 
   static build(req, res) {
@@ -33,7 +37,7 @@ class PageParser {
     co(function* () {
       const pageHtml = yield pageParser.getPageHtml(pageParser.query);
       const pageElements = yield pageParser.grabPageElements(pageHtml, pageParser.query.element);
-console.log(pageElements);
+      console.log(pageElements);
       // yield res.end(pageHtml);
     })
       .catch((error) => {
