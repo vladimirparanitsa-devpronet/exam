@@ -1,0 +1,7 @@
+**/uploads-*/*
+!**/uploads-*/.gitkeep
+node_modules
+npm-debug.log
+coverage
+*.log
+.vscode

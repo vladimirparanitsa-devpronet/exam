@@ -1,0 +1,42 @@
+{
+  "name": "exam.loc",
+  "version": "1.0.0",
+  "description": "Node.js exam",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vladimirparanitsa-devpronet/exam.git"
+  },
+  "keywords": [
+    "Node",
+    "Scrapper",
+    "Mocha"
+  ],
+  "author": "Vladimir Paranitsa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vladimirparanitsa-devpronet/exam/issues"
+  },
+  "homepage": "https://github.com/vladimirparanitsa-devpronet/exam#readme",
+  "dependencies": {
+    "cheerio": "^0.22.0",
+    "co": "^4.6.0",
+    "eslint": "^3.15.0",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.9.0",
+    "express": "^4.14.1",
+    "node-fetch": "^1.6.3"
+  },
+  "devDependencies": {
+    "eslint": "^3.15.0",
+    "eslint-config-airbnb-base": "^11.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "nodemon": "^1.11.0"
+  }
+}
