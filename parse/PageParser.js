@@ -23,17 +23,21 @@ class PageParser {
     this.$ = cheerio.load(pageHtml);
     const result = [];
     this.$(element).map((index, tag) => {
-      result.push(this.$(tag).text());
+      result.push(this.$(tag).html());
     });
 
     return result;
   }
 
   grabLinks() {
+    const links = [];
+
     this.$('a:not([href*="mailto:"])').map((index, tag) => {
-      return '';
+      console.log(this.$(tag));
+      links.push(this.$(tag).attr('src'));
     });
-    return [];
+
+    return links;
   }
 
   static build(req, res) {
@@ -45,7 +49,7 @@ class PageParser {
       const pageElements = yield pageParser.grabPageElements(pageHtml, pageParser.query.element);
       const pageLinks = yield pageParser.grabLinks();
 
-      console.log(pageElements);
+      // console.log(pageLinks);
       yield res.end(pageHtml);
     })
       .catch((error) => {
