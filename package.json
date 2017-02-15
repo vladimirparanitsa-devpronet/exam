@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm test",
-    "start": "node index.js"
+    "start": "./node_modules/.bin/nodemon index.js"
   },
   "repository": {
     "type": "git",

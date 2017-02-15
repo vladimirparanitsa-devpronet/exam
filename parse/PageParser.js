@@ -10,7 +10,6 @@ class PageParser {
   }
 
   getPageHtml({ url, level, element }) {
-    this.response.end(url);
     return fetch(url)
       .then(res => res.text())
       .then(text => text)
@@ -21,13 +20,20 @@ class PageParser {
   }
 
   grabPageElements(pageHtml, element) {
-    const $ = cheerio.load(pageHtml);
+    this.$ = cheerio.load(pageHtml);
     const result = [];
-    $(element).map((index, tag) => {
-      result.push($(tag).text());
+    this.$(element).map((index, tag) => {
+      result.push(this.$(tag).text());
     });
 
     return result;
+  }
+
+  grabLinks() {
+    this.$('a:not([href*="mailto:"])').map((index, tag) => {
+      return '';
+    });
+    return [];
   }
 
   static build(req, res) {
@@ -37,8 +43,10 @@ class PageParser {
     co(function* () {
       const pageHtml = yield pageParser.getPageHtml(pageParser.query);
       const pageElements = yield pageParser.grabPageElements(pageHtml, pageParser.query.element);
+      const pageLinks = yield pageParser.grabLinks();
+
       console.log(pageElements);
-      // yield res.end(pageHtml);
+      yield res.end(pageHtml);
     })
       .catch((error) => {
         console.log(error);
