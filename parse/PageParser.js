@@ -1,15 +1,23 @@
 const cheerio = require('cheerio');
 const co = require('co');
 const fetch = require('node-fetch');
+const urlNode = require('url');
+const config = require('../config');
 
 class PageParser {
   constructor(req, res) {
     this.request = req;
     this.response = res;
     this.query = this.request.query;
+    this.links = [];
+    this.level = this.query.level || config.app.level;
+    this.depth = 0;
+    this.parsedLinks = [];
+
+    this.links.push(this.query.url);
   }
 
-  getPageHtml({ url, level, element }) {
+  getPageHtml(url) {
     return fetch(url)
       .then(res => res.text())
       .then(text => text)
@@ -30,31 +38,22 @@ class PageParser {
   }
 
   grabLinks() {
-    const links = [];
+    let href = '';
+    this.$(`a[href^='${this.query.url}']`).map((index, tag) => {
+      href = this.prepareLinks(this.$(tag).attr('href'));
 
-    this.$('a:not([href*="mailto:"])').map((index, tag) => {
-      console.log(this.$(tag));
-      links.push(this.$(tag).attr('src'));
+      if (this.links.indexOf(href) === -1) {
+        this.links.push(href);
+      }
     });
 
-    return links;
+    return this.links;
   }
 
-  static build(req, res) {
-    console.log('start');
-    const pageParser = new PageParser(req, res);
+  prepareLinks(href) {
+    const urlParts = urlNode.parse(href);
 
-    co(function* () {
-      const pageHtml = yield pageParser.getPageHtml(pageParser.query);
-      const pageElements = yield pageParser.grabPageElements(pageHtml, pageParser.query.element);
-      const pageLinks = yield pageParser.grabLinks();
-
-      // console.log(pageLinks);
-      yield res.end(pageHtml);
-    })
-      .catch((error) => {
-        console.log(error);
-      });
+    return `${urlParts.protocol}//${urlParts.host}${urlParts.path}`;
   }
 }
 
