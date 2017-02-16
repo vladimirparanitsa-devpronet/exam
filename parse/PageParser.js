@@ -19,6 +19,7 @@ class PageParser {
     this.level = this.level || config.app.level;
     this.depth = 0;
     this.parsedLinks = [];
+    this.parent = [];
   }
 
   getPageHtml(url) {
@@ -42,15 +43,20 @@ class PageParser {
 
   grabLinks() {
     let href = '';
+
     this.$(`a[href^='${this.url}']`).map((index, tag) => {
       href = this.prepareLinks(this.$(tag).attr('href'));
+     
+      if (!this.linkInStack(href)) {
 
-      if (parsedLinks.indexOf(href) === -1) {
-        linkToParse.push(href);
+        linkToParse.push({
+          href,
+          parent: this.parent,
+        });
       }
     });
 
-    return this.links;
+    return linkToParse;
   }
 
   prepareLinks(href) {
@@ -64,25 +70,48 @@ class PageParser {
       .getPageHtml(url)
       .then((result) => {
         const pageElements = this.grabPageElements(result, element);
-        const pageLinks = this.grabLinks(result);
+        let parent = this.findParentLink(url).parent || url;
+        this.grabLinks(result);
   
-        parsedLinks.push(url);
-        linkToParse.push(...pageLinks);
-
-        console.log(linkToParse, parsedLinks);
+        parsedLinks.push({ href: url, parent });
+        console.log(parent);
 
         if (parsedLinks.length === linkToParse.length || level >= parsedLinks.length) {
           console.log('Done');
           res.end(JSON.stringify([pageElements, parsedLinks]));
           return true;
         }
-
+level++;
         this.grabPageData(linkToParse[linkToParse.indexOf(url) + 1]);
       })
       .catch((error) => {
         console.log(error);
         return;
       });
+  }
+
+  findParentLink(currentLink) {
+    let result = parsedLinks.find((link) => {
+      return link.href === currentLink;
+    });
+
+    return result ? result.parent.push(currentLink) : { parent: currentLink };
+  }
+
+  linkInStack(link) {
+    return linkToParse.some((row) => {
+      return row.href === link;
+    });
+  }
+
+  findIndex(currentLink) {
+    linkIndex = 0;
+    linkToParse.some((row, index) => {
+      if (row) {
+        return '';
+      }
+    });
+    return index;
   }
 }
 
