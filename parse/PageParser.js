@@ -41,18 +41,21 @@ class PageParser {
     return result;
   }
 
-  grabLinks() {
+  grabLinks(currentLink, parent) {
     let href = '';
 
-    this.$(`a[href^='${this.url}']`).map((index, tag) => {
+    this.$(`a[href^='${this.url}']`).map((index, tag) => { //TODO issue if links without http
       href = this.prepareLinks(this.$(tag).attr('href'));
-     
-      if (!this.linkInStack(href)) {
+// console.log('\n\n\n\n', currentLink, href, '\n\n\n\n');
 
+      if (!this.linkInStack(href)) {
+        // console.log(this.parent, currentLink, linkToParse[this.findIndex(currentLink)]);
+        //TODO for some reason parent links are the same
         linkToParse.push({
           href,
-          parent: this.parent,
+          parent: [].concat(parent, currentLink),
         });
+        // console.log('after ---->', linkToParse);
       }
     });
 
@@ -71,18 +74,18 @@ class PageParser {
       .then((result) => {
         const pageElements = this.grabPageElements(result, element);
         let parent = this.findParentLink(url).parent || url;
-        this.grabLinks(result);
-  
+        this.grabLinks(url, parent);
+  console.log(parent);
         parsedLinks.push({ href: url, parent });
-        console.log(parent);
+        // console.log('\n\n\n\n Links to parse -> ', linkToParse, '\n\n\n', url);
 
-        if (parsedLinks.length === linkToParse.length || level >= parsedLinks.length) {
-          console.log('Done');
+        if (parsedLinks.length === linkToParse.length || 6 <= parsedLinks.length) {
+          // console.log('Done', parsedLinks.length === linkToParse.length, 6 <= parsedLinks.length);
           res.end(JSON.stringify([pageElements, parsedLinks]));
           return true;
         }
 level++;
-        this.grabPageData(linkToParse[linkToParse.indexOf(url) + 1]);
+        this.grabPageData(linkToParse[this.findIndex(url) + 1].href);
       })
       .catch((error) => {
         console.log(error);
@@ -91,11 +94,15 @@ level++;
   }
 
   findParentLink(currentLink) {
+    if (parsedLinks.length === 0) {
+      return { parent: currentLink };
+    }
+
     let result = parsedLinks.find((link) => {
       return link.href === currentLink;
     });
 
-    return result ? result.parent.push(currentLink) : { parent: currentLink };
+    return { parent: currentLink };
   }
 
   linkInStack(link) {
@@ -105,13 +112,15 @@ level++;
   }
 
   findIndex(currentLink) {
-    linkIndex = 0;
+    let linkIndex = 0;
     linkToParse.some((row, index) => {
-      if (row) {
-        return '';
+      if (row.href === currentLink) {
+         linkIndex = index;
+        return true;
       }
     });
-    return index;
+
+    return linkIndex;
   }
 }
 
