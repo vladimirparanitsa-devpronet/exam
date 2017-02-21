@@ -34,6 +34,7 @@ app.get('/api/search/list', (req, res) => {
 
 app.delete('/api/search', (req, res) => {
   const pageParser = new Parser(req, res);
+
   db.deleteRecord(pageParser.key, (error, result) => {
     if (error) {
       res.end({ error: 'Please try again later' });
@@ -52,6 +53,7 @@ app.delete('/api/search', (req, res) => {
 const subpath = express();
 app.use(bodyParser());
 app.use('/v1', subpath);
+
 swagger.setAppHandler(subpath);
 app.use(express.static('dist'));
 
@@ -77,7 +79,6 @@ if (argv.domain !== undefined) {
 }
 
 const applicationUrl = `http://${domain}:${port}`;
-console.log(applicationUrl);
 swagger.configure(applicationUrl, '1.0.0');
 
 // console.log('\033[2J'); // TODO remove before deploy

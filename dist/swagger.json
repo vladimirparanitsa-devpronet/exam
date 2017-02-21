@@ -5,11 +5,11 @@
         "description": "Grab page elements without payments or SMS",
         "version": "1.0.0"
     },
-    "host": "127.0.0.1",
+    "host": "127.0.0.1:3001",
     "schemes": [
         "http"
     ],
-    "basePath": "/v1",
+    "basePath": "/",
     "produces": [
         "application/json"
     ],
