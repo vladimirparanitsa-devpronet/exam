@@ -18,7 +18,7 @@ class PageParser {
     this.depth = 0;
     this.parsedLinks = [];
     this.parent = [];
-    this.result = [];
+    this.result = { foundElements: [] };
     linkToParse.push({ href: this.url, parent: [] });
     this.db = new Db();
     this.key = this.db.createKey(this.url, this.element, this.level);
@@ -28,7 +28,7 @@ class PageParser {
     return fetch(url)
       .then(res => res.text())
       .catch((error) => {
-        this.response.end('Sorry, but looks like we can not get required URL');
+        this.response.end({ error: 'Sorry, but looks like we can not get required URL' });
         console.log(error);
         return false;
       });
@@ -80,14 +80,14 @@ class PageParser {
       .getPageHtml(data.href)
       .then((result) => {
         const pageElements = this.grabPageElements(result, element);
-        this.result = this.result.concat(pageElements);
+        this.result.foundElements = this.result.foundElements.concat(pageElements);
         let parent = [].concat(...data.parent, data.href);
         this.grabLinks(parent);
   
         parsedLinks.push({ href: data.href, parent });
 
         if (parsedLinks.length === linkToParse.length || parent.length >= this.level) {
-          this.response.end(JSON.stringify([this.result, linkToParse]));
+          this.response.end(JSON.stringify([this.result]));
           this.db.saveData(this.key, this.result);
           this.updateHistory();
 
@@ -99,7 +99,7 @@ class PageParser {
         }, 0);
       })
       .catch((error) => {
-        this.response.end('Ooops, something went wrong');
+        this.response.end({ error: 'Ooops, something went wrong' });
         console.log(error);
         return false;
       });
@@ -144,17 +144,13 @@ class PageParser {
   updateHistory() {
     this.db.getRecord('history', (err, result) => {
       if (err) {
+        this.response.end({ error: 'Please try again later' });
         return console.log(err);
       }
 
-      try{
-        const records = result ? JSON.parse(result) : [];
-        records.push({ url: this.url, element: this.element, level: this.level });
-        console.log('Records Update - >', records, 'result', result);
-      } catch(error) {
-        console.log(error);
-      }
-      this.db.saveHistory(JSON.stringify(records));
+      const records = result ? JSON.parse(result) : [];
+      records.push({ url: this.url, element: this.element, level: this.level });
+      this.db.saveHistory(JSON.stringify({ history: records }));
     });
   }
 }

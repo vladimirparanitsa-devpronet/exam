@@ -32,7 +32,9 @@
     "eslint-plugin-react": "^6.9.0",
     "express": "^4.14.1",
     "node-fetch": "^1.6.3",
-    "redis": "^2.6.5"
+    "redis": "^2.6.5",
+    "swagger-express-mw": "^0.7.0",
+    "swagger-tools": "^0.10.1"
   },
   "devDependencies": {
     "eslint": "^3.15.0",
