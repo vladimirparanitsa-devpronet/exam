@@ -3,4 +3,4 @@
 - Grab Data by ```GET /api/search/``` endpoint
 - Grab Search History ```GET /api/search/list``` endpoint
 - Delete List by ```DELETE /api/search/``` endpoint
-- Added swagger ```/v1``` enpoint
+- Added swagger ```/``` enpoint
