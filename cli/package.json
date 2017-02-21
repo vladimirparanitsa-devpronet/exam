@@ -1,0 +1,24 @@
+{
+  "name": "scraper",
+  "version": "1.0.0",
+  "description": "CLI for API scrapper",
+  "main": "app.js",
+  "bin": {
+    "scraper": "app.js"
+  },
+  "scripts": {
+    "test": "npm test"
+  },
+  "keywords": [
+    "cli",
+    "node",
+    "API"
+  ],
+  "author": "Vladimir Paranitsa",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "commander": "^2.9.0",
+    "promptly": "^2.1.0"
+  }
+}
