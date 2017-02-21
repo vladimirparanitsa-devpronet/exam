@@ -28,7 +28,7 @@ class PageParser {
     return fetch(url)
       .then(res => res.text())
       .catch((error) => {
-        this.response.end({ error: 'Sorry, but looks like we can not get required URL' });
+        this.response.end(JSON.stringify({ error: 'Sorry, but looks like we can not get required URL' }));
         console.log(error);
         return false;
       });
@@ -99,7 +99,7 @@ class PageParser {
         }, 0);
       })
       .catch((error) => {
-        this.response.end({ error: 'Ooops, something went wrong' });
+        this.response.end(JSON.stringify({ error: 'Ooops, something went wrong' }));
         console.log(error);
         return false;
       });
@@ -144,7 +144,7 @@ class PageParser {
   updateHistory() {
     this.db.getRecord('history', (err, result) => {
       if (err) {
-        this.response.end({ error: 'Please try again later' });
+        this.response.end(JSON.stringify({ error: 'Please try again later' }));
         return console.log(err);
       }
 

@@ -1,0 +1,195 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Scraper API",
+        "description": "Grab page elements without payments or SMS",
+        "version": "1.0.0"
+    },
+    "host": "127.0.0.1",
+    "schemes": [
+        "http"
+    ],
+    "basePath": "/v1",
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/api/search/": {
+            "get": {
+                "summary": "Grab page elements recursively",
+                "description": "Search endpoint return a list of elements found on pages after they was \nparsed recursively\n",
+                "parameters": [
+                    {
+                        "name": "url",
+                        "in": "query",
+                        "description": "Link to site which should be parsed",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "element",
+                        "in": "query",
+                        "description": "The element which should be seek on every page of site",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "level",
+                        "in": "query",
+                        "description": "Determinate how deep should parser go",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Search"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "JSON with all found elements",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Results"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete search results",
+                "description": "Delete search results based on query params, but not effect history\n",
+                "parameters": [
+                    {
+                        "name": "url",
+                        "in": "query",
+                        "description": "Link to site which should be parsed",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "element",
+                        "in": "query",
+                        "description": "The element which should be seek on every page of site",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "level",
+                        "in": "query",
+                        "description": "Determinate how deep should parser go",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Delete search"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array with search history",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/DeleteSearch"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/search/list": {
+            "get": {
+                "summary": "Search history",
+                "description": "Return history of all search requests\n",
+                "tags": [
+                    "Search history"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array with search history",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/SearchHistory"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Results": {
+            "type": "object",
+            "properties": {
+                "foundElements": {
+                    "type": "object",
+                    "description": "List of all elements which was found while site was parse"
+                }
+            }
+        },
+        "SearchHistory": {
+            "type": "object",
+            "properties": {
+                "history": {
+                    "type": "object",
+                    "description": "List of all search results",
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "description": "URL which was used to grab data"
+                        },
+                        "element": {
+                            "type": "string",
+                            "description": "Tag which should be used by script to grab content"
+                        },
+                        "level": {
+                            "type": "integer",
+                            "description": "Level of depth"
+                        }
+                    }
+                }
+            }
+        },
+        "DeleteSearch": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "description": "Determinate if search result was remove"
+                },
+                "message": {
+                    "type": "string",
+                    "description": "Provide more details about delete history process"
+                }
+            }
+        },
+        "Error": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
