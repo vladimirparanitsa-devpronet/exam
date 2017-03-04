@@ -83,15 +83,14 @@ class PageParser {
         this.result.foundElements = this.result.foundElements.concat(pageElements);
         let parent = [].concat(...data.parent, data.href);
         this.grabLinks(parent);
-  
+
         parsedLinks.push({ href: data.href, parent });
 
         if (parsedLinks.length === linkToParse.length || parent.length >= this.level) {
           this.response.end(JSON.stringify([this.result]));
-          this.db.saveData(this.key, this.result);
-          this.updateHistory();
-
-          return true;
+          return this.db.saveData(this.key, this.result)
+            .then(() => this.updateHistory())
+            .then(() => true);
         }
 
         setTimeout(() => {
@@ -142,16 +141,7 @@ class PageParser {
   }
 
   updateHistory() {
-    this.db.getRecord('history', (err, result) => {
-      if (err) {
-        this.response.end(JSON.stringify({ error: 'Please try again later' }));
-        return console.log(err);
-      }
-
-      const records = result ? JSON.parse(result) : [];
-      records.push({ url: this.url, element: this.element, level: this.level });
-      this.db.saveHistory(JSON.stringify({ history: records }));
-    });
+    return this.db.saveHistory({ url: this.url, element: this.element, level: this.level });
   }
 }
 
