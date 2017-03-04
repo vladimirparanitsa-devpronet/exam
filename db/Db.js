@@ -19,6 +19,7 @@ class Db {
 
   saveData(key, value, ttl = this.ttl) {
     return client.setexAsync(key, ttl, JSON.stringify(value));
+    // its really easier this way
   }
 
   saveHistory(history, key = 'history') {
