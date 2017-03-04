@@ -19,7 +19,7 @@ app.get('/api/search', (req, res) => {
   db.getData(pageParser.key)
     .then((result) => {
       if (result) {
-        console.log('resuylt', result);
+        console.log('result', result);
         return res.end(result);
       }
       pageParser.grabPageData();
