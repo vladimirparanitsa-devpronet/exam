@@ -24,7 +24,8 @@ class Db {
 
   saveHistory(history, key = 'history') {
     // the saving history didnt work here - it stored only the first search
-    // now it stores Hash for the each history object and List of that hash ids
+    // now it stores Hash for the each history object and List of that hashes ids
+    // please read The Little Redis Book to work with Redis effectively
     const itemKey = uuid.v4();
     return client.multi()
       .hmset(itemKey, history)
